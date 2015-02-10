@@ -121,6 +121,7 @@ name: grundlagen-unicode
 
 
 <!-- ######################### Kapitel 2 ############################ -->
+
 ---
 layout: false
 class: middle
@@ -241,6 +242,7 @@ name: valid-evil-2
 
 
 <!-- ######################### Kapitel 4 ############################ -->
+
 ---
 class: middle
 layout: false
@@ -352,6 +354,7 @@ name: fn-callstack
 
 
 <!-- ######################### Kapitel 4 ############################ -->
+
 ---
 class: middle
 layout: false
@@ -518,13 +521,17 @@ name: obj-monkey
 
 
 <!-- ######################### Kapitel 5 ############################ -->
+
 ---
 class: middle
 layout: false
 # Arrays und Dictionaries
 1. [Definition](#dict-definition)
-2. [Erstellen von schlanken Dictionaries mit Object](#dict-obj)
-3. [](#dict-)
+2. [Erstellen von schlanken Dictionaries mit Object](#dict-schlank)
+3. [Null-Prototypen als Maßnahme gegen Prototypverunreinigung](#dict-null)
+4. [](#dict-)
+5. [](#dict-)
+6. [](#dict-)
 
 
 
@@ -543,16 +550,71 @@ Ein Objekt in JavaScript kann für viele unterschiedliche Dinge verwendet werden
 - Array mit geringer oder hoher Dichte
 - Hash-Tabelle
 
-
----
-name: dict-obj
-### Erstellen von schlanken Dictionaries mit Object
 **Definition Dictionary:** 
 - Dabei handelt es sich um Sammlungen (Collection) variabler Größe, die Strings zu Werten zuweisen.
 
+
 ---
-name: dict-
-### Definition
+name: dict-schlank
+### Erstellen von schlanken Dictionaries mit Object
+- Zur Konstruktion von schlanken Dictionaries Objektliterale verwenden
+- Nur direkte Object-Instanzen verwenden: Als Schutz gegen **Prototypverunreinigung (Prototype Pollution)** in for-in Schleifen sollten schlanke Dictionaries direkt von Object.prototype abstammen (Objektliteral als Erzeuger)  
+
+
+---
+name: dict-null
+### Null-Prototypen als Maßnahme gegen Prototypverunreinigung
+- Vor ES5 gab es keine Standardmöglichkeit, um ein neues Objekt mit leerem Prototyp zu erstellen, welches weniger empfindlich gegen eine Prototyp Verunreinigung ist
+
+```javascript
+function C() {}
+C.prototype = null;
+var c = new C();
+Object.getPrototypeOf(c) === null; // false
+Object.getPrototypeOf(c) === Object.prototype; // true --> new erstellt leeres Objekt!
+```
+
+- Eine Möglichkeit, um ein Objekt mit benutzerdefinierten Prototyp zu erstellen bietet die in ES5 eingeführte statische Methode Object.create()
+- Als erster Parameter wird der jeweilige Prototyp angegeben, der zweite Parameter ist eine Eigenschafts-Deskriptor-Zuordnung, welche die Werte und Attribute des neuen Objektes beschreiben
+
+```javascript
+var y = Object.create(null, {wert: {value: 1}}); // {wert:1}
+Object.getPrototypeOf(y) === null; // true
+```  
+
+---
+### Null-Prototypen als Maßnahme gegen Prototypverunreinigung
+- Mit \_\_proto\_\_ ist dieses Resultat auch möglich (bis ES5 nicht standardkonform)
+- In einigen Umgebungen sorgt die Verwendung von "\_\_proto\_\_" (Stringdarstellung) als Schlüssel für Fehler
+
+```javascript
+var y = Object.create(null, {wert: {value: 1}}); // {wert:1}
+Object.getPrototypeOf(y) === null; // true
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---

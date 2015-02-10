@@ -1,55 +1,79 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Title</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style type="text/css">
 
-      body { font-family: 'Droid Serif'; }
-      h1, h2, h3 {
-        font-family: 'Yanone Kaffeesatz';
-        font-weight: normal;
-      }
-      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-	  
-	  /*Custom CSS*/
-		ul li, ol li {
-			padding: 5px 0;
-		}
-		h1,h2,h3,h4,h5,h6 {
-			margin: 0;
-		}
-		
-		h3 {
-			border-bottom: 1px solid black;
-			padding: 5px 0;
-		}
-		
-		h4 {
-			float: right;
-			font-size: 30px;
-			color: teal;
-			opacity: .3;
-			margin-top: 5px;
-		}
-		
-		p + ul {
-			margin-top: 5px;
-		}
-		
-		p {
-			margin: 5px 0;
-		}
-		
+        body {
+            font-family: 'Droid Serif';
+        }
+
+        h1, h2, h3 {
+            font-family: 'Yanone Kaffeesatz';
+            font-weight: normal;
+        }
+
+        .remark-code, .remark-inline-code {
+            font-family: 'Ubuntu Mono';
+        }
+
+        /*Custom CSS*/
+        ul li, ol li {
+            padding: 5px 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 0;
+        }
+
+        h3 {
+            border-bottom: 1px solid black;
+            padding: 5px 0;
+        }
+
+        h4 {
+            float: right;
+            font-size: 30px;
+            color: teal;
+            opacity: .3;
+            margin-top: 5px;
+        }
+
+        ul {
+            margin: 10px 0;
+        }
+
+        p + ul {
+            margin-top: 5px;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        code {
+            position: relative;
+        }
+
+        code::before {
+            position: absolute;
+            content: "Code";
+            top: -21px;
+            background: #E0E0E0;
+            padding: 0 3px;
+            font-family: monospace;
+        }
+
     </style>
-  </head>
-  <body>
-    <script src="remark.js">
-    </script>
-    <script>
-	var slideshow = remark.create({
-	  sourceUrl: 'JavaScript.md'
-	});
-    </script>
-  </body>
+</head>
+<body>
+<script src="remark.js">
+</script>
+<script>
+    var slideshow = remark.create({
+        sourceUrl: 'JavaScript.md'
+    });
+</script>
+</body>
 </html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Null-Prototypen</title>
+</head>
+<body>
+
+
+<script>
+    // Nope!
+    function C() {}
+    C.prototype = null;
+    var c = new C();
+    Object.getPrototypeOf(c) === null; // false
+    Object.getPrototypeOf(c) === Object.prototype; // true --> new erstellt leeres Objekt!
+    console.dir(c);
+
+    // ES5 Object.create
+    var y = Object.create(null, {wert: {value: 1}}); // {wert:1}
+    Object.getPrototypeOf(y) === null; // true
+    console.dir(y);
+
+    // __proto__
+    var z = {__proto__: null};
+    z instanceof Object; // false
+    console.dir(z);
+</script>
+
+</body>
+</html>
