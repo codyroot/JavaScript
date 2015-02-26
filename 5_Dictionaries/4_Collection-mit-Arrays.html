@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Collection mit Arrays</title>
+</head>
+<body>
+<h1>Collection mit Arrays</h1>
+
+<script>
+    // Schlüssel werden nach Wertigkeit sortiert, wenn sie Arrayindezies enthalten
+    // Dabei müssen nicht alle Schlüssel Arrayindezies sein, alle anderen werden danach einsortiert werden
+    var dict = {
+        "31": "Eins",
+        "blubb": "Zwei",
+        "12": "Drei",
+        "18": "Vier"
+    };
+
+    for (var index in dict) {
+        console.log(dict[index]); // Drei, View, Eins, Zwei
+    }
+
+</script>
+
+</body>
+</html>

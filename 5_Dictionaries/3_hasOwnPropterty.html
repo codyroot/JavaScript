@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>hasOwnProperty</title>
+</head>
+<body>
+<h1>hasOwnProperty</h1>
+
+<script>
+    var dict = {},
+        hasOwn = Object.prototype.hasOwnProperty;
+    dict.name = "Bud";
+    dict.age = 80;
+
+    dict.hasOwnProperty = "Überschrieben!";
+    hasOwn.call(dict, "name"); // Geht
+    dict.hasOwnProperty("name"); // Fehler
+
+</script>
+
+</body>
+</html>

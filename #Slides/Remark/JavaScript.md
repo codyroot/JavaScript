@@ -529,9 +529,13 @@ layout: false
 1. [Definition](#dict-definition)
 2. [Erstellen von schlanken Dictionaries mit Object](#dict-schlank)
 3. [Null-Prototypen als Maßnahme gegen Prototypverunreinigung](#dict-null)
-4. [](#dict-)
-5. [](#dict-)
-6. [](#dict-)
+4. [hasOwnProperty gegen Prototyp Verunreinigung](#dict-hasOwn)
+5. [Für geordnete Collection Arrays statt Dictionaries verwenden](#dict-collection)
+6. [igenschaften zu Object.prototype hinzufügen!](#dict-count)
+7. [Objekte nicht während einer Aufzählung verändern](#dict-change)
+8. [](#dict-)
+9. [](#dict-)
+10. [](#dict-)
 
 
 
@@ -557,14 +561,32 @@ Ein Objekt in JavaScript kann für viele unterschiedliche Dinge verwendet werden
 ---
 name: dict-schlank
 ### Erstellen von schlanken Dictionaries mit Object
-- Zur Konstruktion von schlanken Dictionaries Objektliterale verwenden
-- Nur direkte Object-Instanzen verwenden: Als Schutz gegen **Prototypverunreinigung (Prototype Pollution)** in for-in Schleifen sollten schlanke Dictionaries direkt von Object.prototype abstammen (Objektliteral als Erzeuger)  
+- Zur Konstruktion von schlanken Dictionaries sind Objektliterale am besten
+- Nur direkte Object-Instanzen verwenden: Als Schutz gegen **Prototypverunreinigung (Prototype Pollution)** in for-in Schleifen sollten schlanke Dictionaries direkt von Object.prototype abstammen (Objektliteral als Erzeuger) 
+ 
+```javascript
+Array.prototype.first = function () {
+    return this[O];
+};
+
+var dict = [],
+    array = [];
+
+dict.bud = 12;
+dict.terry = 80;
+
+for (var name in dict) {
+    array.push(name);
+}
+console.log(array); // bud, terry, first
+```
 
 
 ---
 name: dict-null
 ### Null-Prototypen als Maßnahme gegen Prototypverunreinigung
 - Vor ES5 gab es keine Standardmöglichkeit, um ein neues Objekt mit leerem Prototyp zu erstellen, welches weniger empfindlich gegen eine Prototyp Verunreinigung ist
+- Bei der Instanziierung im folgenden Beispiel werden trotzdem Instanzen von Object gebildet, da new ein leeres Objekt erstellt
 
 ```javascript
 function C() {}
@@ -585,36 +607,86 @@ Object.getPrototypeOf(y) === null; // true
 ---
 ### Null-Prototypen als Maßnahme gegen Prototypverunreinigung
 - Mit \_\_proto\_\_ ist dieses Resultat auch möglich (bis ES5 nicht standardkonform)
-- In einigen Umgebungen sorgt die Verwendung von "\_\_proto\_\_" (Stringdarstellung) als Schlüssel für Fehler
+- In einigen Umgebungen sorgt die Verwendung von "\_\_proto\_\_" (Stringdarstellung) als Schlüsselpaar für Fehler
 
 ```javascript
-var y = Object.create(null, {wert: {value: 1}}); // {wert:1}
+var y = Object.create(null, {wert: {value: 1}}); // y = {wert:1}
 Object.getPrototypeOf(y) === null; // true
 ```
 
 
+---
+name: dict-hasOwn
+### hasOwnProperty gegen Prototyp Verunreinigung
+- Verwenden von hasOwnProperty als Schutz gegen Prototyp-Verunreinigung
+- Verwenden des lexikalischen Gültigkeitsbereich und call als Schutz dagegen, dass die Methode hasOwnProperty überschrieben wird.
+- Implementieren von Dictionary-Operationen in einer Klasse, die alle hasOwnProperty-Standardtests kapselt
+- Verwenden der Dictionary-Klasse als Schutz gegen die Verwendung von "\_\_proto\_\_" als Schlüssel
+
+```javascript
+var dict = {},
+    hasOwn = Object.prototype.hasOwnProperty;
+
+dict.name = "Bud";
+dict.age = 80;
+
+dict.hasOwnProperty = "Überschrieben!";
+hasOwn.call(dict, "name"); // Geht
+dict.hasOwnProperty("name"); // Fehler
+```
 
 
+---
+name: dict-collection
+### Für geordnete Collection Arrays statt Dictionaries verwenden
+- Die Reihenfolge in der for in Schleifen Objekteigenschaften aufzählen ist nicht spezifiziert
+- In einige Umgebungen (Chrome 41, FF36, IE11) werden die Schlüsselpaare nach der Wertigkeit des Schlüsselnamens sortiert (bzw. aufgezählt), aber nur wenn Arrayindezies als Schlüsselname dienen 
+- Dabei müssen nicht alle Schlüsselnamen Arrayindezies enthalten, Schlüsselnamen mit andere Namensgebung werden nachfolgend einsortiert
+
+```javascript
+var dict = {
+    "31": "Eins",
+	"blubb": "Zwei",
+	"12": "Drei",
+	"18": "Vier"
+};
+for (var index in dict) {
+    console.log(dict[index]); // Drei, Vier, Eins, Zwei
+}
+```
+
+- **Achtung!** wenn das Programm auf eine bestimmte Reihenfolge der Objektaufzählung angewiesen ist
+- Daher eignet sich ein Array für die Speicherung einer Datenstruktur mit bestimmeter Reihenfolge besser als ein Dictionary
 
 
+---
+name: dict-count
+### Eigenschaften zu Object.prototype hinzufügen
+- Keine aufzählbaren Eigenschaften zu Object.prototype hinzuzufügen, stattdessen lieber eine Funktion schreiben
+- Alternativ mit der ES5 Methode Object.defineProperty Eigenschaften und Metadaten (Konfiguration über die Attribute) zu Object.prototype hinzufügen und diese als nicht aufzählbar deklarieren **(enumerable auf false)**
+
+```javascript
+Object.defineProperty(Object.prototype, "neueEigenschaft", {
+    writable: true,			// true --> Wert KANN verändert werden
+    enumerable: false,		// true --> DARF in for-in-Schleifen auftauchen
+    configurable: false,	// true --> DARF NICHT gelöscht werden
+    value: "Neuer Wert"		// Wert von neueEigenschaft ist "Neuer Wert"
+});
+
+var dict = {
+    "blubb": "Hi",
+    "buddy": "YO"
+};
+
+for (var prop in dict) {
+    console.log(dict[prop]); // Hi, YO
+}
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+---
+name: dict-change
+### Objekte nicht während einer Aufzählung verändern
 
 
 ---
@@ -630,5 +702,3 @@ name: dict-
 ---
 name: dict-
 ### Definition
-
-

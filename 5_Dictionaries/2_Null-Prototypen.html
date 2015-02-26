@@ -5,10 +5,10 @@
     <title>Null-Prototypen</title>
 </head>
 <body>
-
+<h1>Null-Prototypen als Maßnahme gegen Prototypverunreinigung</h1>
 
 <script>
-    // Nope!
+    // Bei der Instanziierung werden trotzdem Instanzen von Object gebildet
     function C() {}
     C.prototype = null;
     var c = new C();
@@ -17,7 +17,7 @@
     console.dir(c);
 
     // ES5 Object.create
-    var y = Object.create(null, {wert: {value: 1}}); // {wert:1}
+    var y = Object.create(null, {wert: {value: 1}}); // y = {wert:1}
     Object.getPrototypeOf(y) === null; // true
     console.dir(y);
 

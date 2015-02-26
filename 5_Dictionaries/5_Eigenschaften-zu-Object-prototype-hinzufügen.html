@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Eigenschaften zu Object.protoype hinzufügen</title>
+</head>
+<body>
+<h1>Eigenschaften zu Object.protoype hinzufügen</h1>
+
+<script>
+    Object.defineProperty(Object.prototype, "neueEigenschaft", {
+        writable: true,        // true --> Wert KANN verändert werden
+        enumerable: false,     // true --> DARF in for-in-Schleifen auftauchen
+        configurable: false,   // true --> DARF NICHT gelöscht werden
+        value: "Neuer Wert"    // Wert von neueEigenschaft ist "Neuer Wert"
+    });
+
+    var dict = {
+        "blubb": "Hi",
+        "buddy": "YO"
+    };
+
+    for (var prop in dict) {
+        console.log(dict[prop]); // Hi, YO
+    }
+</script>
+
+</body>
+</html>
