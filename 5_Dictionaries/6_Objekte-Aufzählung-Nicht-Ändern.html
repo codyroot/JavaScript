@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Objekte nicht während einer Aufzählung verändern</title>
+</head>
+<body>
+<h1>Objekte nicht während einer Aufzählung verändern</h1>
+
+<script>
+
+    var dict = {
+        "blubb": "Hi",
+        "buddy": "YO"
+    };
+
+    for (var prop in dict) {
+        console.log(dict[prop]); // Hi, YO
+    }
+</script>
+
+</body>
+</html>

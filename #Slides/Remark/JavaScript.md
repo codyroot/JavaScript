@@ -533,7 +533,7 @@ layout: false
 5. [Für geordnete Collection Arrays statt Dictionaries verwenden](#dict-collection)
 6. [igenschaften zu Object.prototype hinzufügen!](#dict-count)
 7. [Objekte nicht während einer Aufzählung verändern](#dict-change)
-8. [](#dict-)
+8. [Arrays mit for anstatt mit for in iterieren ](#dict-for)
 9. [](#dict-)
 10. [](#dict-)
 
@@ -562,7 +562,7 @@ Ein Objekt in JavaScript kann für viele unterschiedliche Dinge verwendet werden
 name: dict-schlank
 ### Erstellen von schlanken Dictionaries mit Object
 - Zur Konstruktion von schlanken Dictionaries sind Objektliterale am besten
-- Nur direkte Object-Instanzen verwenden: Als Schutz gegen **Prototypverunreinigung (Prototype Pollution)** in for-in Schleifen sollten schlanke Dictionaries direkt von Object.prototype abstammen (Objektliteral als Erzeuger) 
+- Als Schutz gegen **Prototypverunreinigung (Prototype Pollution)** in for-in Schleifen sollten schlanke Dictionaries direkt von Object.prototype abstammen (Objektliteral als Erzeuger) 
  
 ```javascript
 Array.prototype.first = function () {
@@ -586,7 +586,7 @@ console.log(array); // bud, terry, first
 name: dict-null
 ### Null-Prototypen als Maßnahme gegen Prototypverunreinigung
 - Vor ES5 gab es keine Standardmöglichkeit, um ein neues Objekt mit leerem Prototyp zu erstellen, welches weniger empfindlich gegen eine Prototyp Verunreinigung ist
-- Bei der Instanziierung im folgenden Beispiel werden trotzdem Instanzen von Object gebildet, da new ein leeres Objekt erstellt
+- Bei der Instanziierung im folgenden Beispiel werden trotzdem Instanzen von Object gebildet, da new immer ein neues Objekt erstellt
 
 ```javascript
 function C() {}
@@ -597,17 +597,18 @@ Object.getPrototypeOf(c) === Object.prototype; // true --> new erstellt leeres O
 ```
 
 - Eine Möglichkeit, um ein Objekt mit benutzerdefinierten Prototyp zu erstellen bietet die in ES5 eingeführte statische Methode Object.create()
-- Als erster Parameter wird der jeweilige Prototyp angegeben, der zweite Parameter ist eine Eigenschafts-Deskriptor-Zuordnung, welche die Werte und Attribute des neuen Objektes beschreiben
+- Als erster Parameter wird der jeweilige Prototyp angegeben, der zweite Parameter ist eine Eigenschafts-Deskriptor-Zuordnung, welche die Eigenschaft und Methoden sowie deren Konfiguration (Attribute) des neuen Objektes beschreiben
 
 ```javascript
 var y = Object.create(null, {wert: {value: 1}}); // {wert:1}
 Object.getPrototypeOf(y) === null; // true
 ```  
 
+
 ---
 ### Null-Prototypen als Maßnahme gegen Prototypverunreinigung
 - Mit \_\_proto\_\_ ist dieses Resultat auch möglich (bis ES5 nicht standardkonform)
-- In einigen Umgebungen sorgt die Verwendung von "\_\_proto\_\_" (Stringdarstellung) als Schlüsselpaar für Fehler
+- In einigen Umgebungen sorgt die Verwendung von "\_\_proto\_\_" (Stringdarstellung) als Schlüsselpaarname für Fehler
 
 ```javascript
 var y = Object.create(null, {wert: {value: 1}}); // y = {wert:1}
@@ -619,9 +620,9 @@ Object.getPrototypeOf(y) === null; // true
 name: dict-hasOwn
 ### hasOwnProperty gegen Prototyp Verunreinigung
 - Verwenden von hasOwnProperty als Schutz gegen Prototyp-Verunreinigung
-- Verwenden des lexikalischen Gültigkeitsbereich und call als Schutz dagegen, dass die Methode hasOwnProperty überschrieben wird.
+- Verwenden eines lexikalischen Gültigkeitsbereich sowie call als Schutzmaßnahme die Methode hasOwnProperty nicht zu überschreiben 
 - Implementieren von Dictionary-Operationen in einer Klasse, die alle hasOwnProperty-Standardtests kapselt
-- Verwenden der Dictionary-Klasse als Schutz gegen die Verwendung von "\_\_proto\_\_" als Schlüssel
+- Verwenden der Dictionary-Klasse als Schutz gegen die Verwendung von "\_\_proto\_\_" als Schlüssel (if Prüfung ob der Schlüssel verwendet wurde)
 
 ```javascript
 var dict = {},
@@ -630,7 +631,7 @@ var dict = {},
 dict.name = "Bud";
 dict.age = 80;
 
-dict.hasOwnProperty = "Überschrieben!";
+dict.hasOwnProperty = "Überschrieben!"; 
 hasOwn.call(dict, "name"); // Geht
 dict.hasOwnProperty("name"); // Fehler
 ```
@@ -687,6 +688,33 @@ for (var prop in dict) {
 ---
 name: dict-change
 ### Objekte nicht während einer Aufzählung verändern
+- Ein Objekt sollte nicht verändert werden, während seine Eigenschaften in einer for in Schleife aufgezählt werden
+- Der JavaScript Standard sagt dazu folgendes: 
+> *Wenn zu dem Objekt, über welches iteriert wird, während der Iteration neue Eigenschaften hinzugefügt werden, kann nicht garantiert werden, dass neu hinzugekommene Eigenschaften in der laufenden Aufzählung aufgesucht werden*
+- Um eine vorhersagbare Aufzählung veränderlicher Datenstrukturen zu treffen, sollte anstatt eines Dictionary-Objekts eine sequenzielle Datenstruktur wie ein Array verwendet werden
+- Für Arrayiterationen sind while oder klassische for Schleifen besser als eine for in Schleife
+
+
+---
+name: dict-for
+### Arrays mit for anstatt mit for in Schleifen iterieren 
+- Zur Iteration über die indizierten Eigenschaften eines Arrays immer eine for-Schleife und keine for in Schleife verwenden
+- Eine for in Schleife zählt die Schlüsselnamen auf, vorsicht da die Schlüssel von Objekteigenschaften Strings sind
+
+```javascript
+var zahlen = [1, 2, 3];
+var summe1 = 0;
+var summe2 = 0;
+
+// Achtung! Die Schlüssel von Objekteigenschaften sind Strings
+for (var wert in zahlen) {
+    summe1 += wert; // falsch, hier werden Strings verkettet
+    summe2 += zahlen[wert]; // Korrekt!
+}
+console.log(summe/ zahlen.length); // Falscher Durchschnitt, da Strings
+console.log(summe2 / zahlen.length); // Korrekter Durchschnitt
+```
+- Speichern der Eigenschaft length eines Arrays vor Beginn der Schleife in einer lokalen Variable, um eine Neuberechnung zu vermeiden
 
 
 ---
@@ -697,6 +725,12 @@ name: dict-
 ---
 name: dict-
 ### Definition
+
+
+---
+name: dict-
+### Definition
+
 
 
 ---

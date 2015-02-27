@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Arrays mit for anstatt mit for in Schleifen iterieren</title>
+</head>
+<body>
+<h1>Arrays mit for anstatt mit for in Schleifen iterieren</h1>
+
+<script>
+
+    var zahlen = [1, 2, 3];
+    var summe1 = 0;
+    var summe2 = 0;
+
+    // Achtung! Die Schlüssel von Objekteigenschaften sind Strings
+    for (var wert in zahlen) {
+        summe1 += wert; // falsch, hier werden Strings verkettet
+        summe2 += zahlen[wert]; // Korrekt!
+    }
+    console.log(summe/ zahlen.length); // Falscher Durchschnitt, da Strings
+    console.log(summe2 / zahlen.length); // Korrekter Durchschnitt
+
+</script>
+
+</body>
+</html>
