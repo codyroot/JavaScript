@@ -534,9 +534,12 @@ layout: false
 6. [igenschaften zu Object.prototype hinzufügen!](#dict-count)
 7. [Objekte nicht während einer Aufzählung verändern](#dict-change)
 8. [Arrays mit for anstatt mit for in iterieren ](#dict-for)
-9. [](#dict-)
-10. [](#dict-)
-
+9. [Iterationsmethoden sind besser als Schleifen](#dict-methoden)
+10. [Generische Arraymethoden für arrayähnliche Objekte wiederverwenden](#dict-arraykind)
+11. [Verwenden von Arrayliterale statt des Arraykonstruktors](#dict-arrayliteral)
+12. [](#dict-)
+13. [](#dict-)
+14. [](#dict-)
 
 
 ---
@@ -708,8 +711,8 @@ var summe2 = 0;
 
 // Achtung! Die Schlüssel von Objekteigenschaften sind Strings
 for (var wert in zahlen) {
-    summe1 += wert; // falsch, hier werden Strings verkettet
-    summe2 += zahlen[wert]; // Korrekt!
+    summe1 += wert; // 012 --> falsch, hier werden Strings verkettet
+    summe2 += zahlen[wert]; // 2 --> Korrekt!
 }
 console.log(summe/ zahlen.length); // Falscher Durchschnitt, da Strings
 console.log(summe2 / zahlen.length); // Korrekter Durchschnitt
@@ -718,21 +721,112 @@ console.log(summe2 / zahlen.length); // Korrekter Durchschnitt
 
 
 ---
-name: dict-
-### Definition
+name: dict-methoden
+### Iterationsmethoden sind besser als Schleifen
+- Anstelle von for-Schleifen Iterationsmethoden wie Array.prototype.forEach und Array.prototype.map verwenden, um den Code besser lesbar zu machen und die Steuerlogik von Schleifen nicht duplizieren zu müssen
+- Häufig vorkommende Schleifenvorgänge, die von der Standardbibliothek nicht abgedeckt werden, mit selbst geschriebenen lterationsfunktionen abstrahieren
+- Für Schleifen, die vorzeitig abgebrochen werden müssen, können herkömmliche Schleifen nach wie vor geeignet sein. Alternativ eignen sich dazu die Methoden some und every
+
+```javascript
+var greaterThanNull = [1, 2, 3, 4, 5].every (function (x) {
+    return x > 0 ;
+});
+console.log(greaterthanNull); // true
+```
 
 
 ---
-name: dict-
-### Definition
+name: dict-arraykind
+### Generische Arraymethoden für arrayähnliche Objekte wiederverwenden
+- Die generischen Methoden von Arrays können für arrayähnliche Objekte wiederverwendet werden, indem die Methodenobjekte extrahiert werden und darüber hinaus die call-Methode verwenden
+
+**Definition arrayähnlich**
+- Das Objekt verfügt über die Integereigenschaft length mit einem Wertebereich zwischen 0 und 2^32 - 1 
+- Der Wert von length ist größer als der größte Index des Objekts
+- Ein Index ist ein Integer aus dem Bereich zwischen 0 und 2^32 - 2, dessen Stringdarstellung als Schlüssel für eine Eigenschaft des Objekts dient.
+- Auch Strings verhalten sich wie unveränderbare Arrays, da sie indiziert werden können und ihre Länge über die Eigenschaft length zugänglich ist
+
+```javascript
+var arraylike = { 0: "a", 1: "b", 2: "c" , length : 3 }; // hat eine length Eigenschaft
+var result = Array.prototype.map.call(arraylike, function (s) {
+    return s.toUpperCase() ;
+}) ; // ["A",  "B" , "C"]
+```
+
+**Weitere Arrayeigenschaften:**
+- Wenn die Eigenschaft length auf einen kleineren Wert n gesetzt wird, werden automatisch alle Eigenschaften mit einem Index größer oder gleich n gelöscht
+- Wird eine Eigenschaft mit dem Index n hinzugefügt, der größer oder gleich dem Wert der Eigenschaft length ist, so wird length automatisch auf n + 1 gesetzt
+
+```javascript
+    // Array length Verhalten
+    var array = ["a", "b", "c"]; // length ist 3
+    array[10] = "JO"; // length ist 11
+    array.length = 2;
+    console.log(array); // ["a", "b"]
+```
+- Es gibt eine einzige Array-Methode, die nicht allgemeingültig ist, nämlich die Verkettungsmethode concat. Sie kann für alle arrayähnlichen Empfänger aufgerufen werden, prüft aber den [[Class]]-Wert
+ihrer Argumente. Argumente, die echte Arrays sind, werden verkettet, andere Argumente dagegen werden als einzelnes Element hinzugefügt.
+
+```javascript
+// Concat prüft den [[class]] - Wert
+function namesColumn () {
+    // return ["Names"].concat(arguments); --> geht nicht 
+    // Rückgabe ["Names", {0: "Alice" ,1: "Bob" ,2: "Chris"}]
+    return ["Names"].concat([].slice.call(arguments));
+}
+namesColumn("Alice", "Bob", "Chris"); // ["Names", "Alice" , "Bob" , "Chris" ]
+```
 
 
 ---
-name: dict-
-### Definition
+name: dict-arrayliteral
+### Verwenden von Arrayliterale statt des Arraykonstruktors
+**Vorsicht beim Arraykonstruktor**
+- Der Arraykonstruktor ist überladen:
+  - Kein Parameter --> Leeres Array wird erstellt
+  - Einzelnes nummerisches Argument --> Ein Array mit der jeweiligen Länge des Arguments wird erstellt (length erhält somit den Wert)
+  - Die nummerische 0 als Argument --> Leeres Array wird erstellt
+  - Mehrere Argumente --> Ein Array mit den angegebenen Argumenten als Inhalt wird erstellt
+
+- Konstruktoren können überschrieben werden
+
+```javascript
+function keinArray(Array, content) {
+    return new Array(content);
+}
+console.log(keinArray(String, "Das ist kein Array"));
+```
+
+
+<!-- ######################### Kapitel 6 ############################ -->
+
+---
+class: middle
+layout: false
+# API
+1. [API](#api-definition)
+2. asd
+3. asd
+4. 
 
 
 
 ---
-name: dict-
-### Definition
+template: default
+layout: true
+#### API
+
+
+---
+name: api-definition
+
+
+
+
+
+
+---
+name: api-
+### API
+
+
