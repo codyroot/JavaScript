@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Arraymethoden wiederverwenden</title>
+</head>
+<body>
+<h1>Arraymethoden wiederverwenden</h1>
+
+<script>
+
+    var arraylike = { 0: "a", 1: "b", 2: "c", length: 3 }; // hat eine length Eigenschaft
+    var result = Array.prototype.map.call(arraylike, function (s) {
+        return s.toUpperCase() ;
+    }) ;
+    console.log(result); // ["A","B","C"]
+
+
+    // Array length Verhalten
+    var array = ["a", "b", "c"]; // length ist 3
+    array[10] = "JO"; // length ist 11
+    array.length = 2;
+    console.log(array); // ["a", "b"]
+
+    // Concat prüft den internen [[class]] - Wert
+    function namesColumn () {
+        // return ["Names"].concat(arguments); --> geht nicht
+        // Rückgabe ["Names", {0: "Alice" ,1: "Bob" ,2: "Chris"}]
+        return ["Names"].concat([].slice.call(arguments));
+    }
+    namesColumn("Alice", "Bob", "Chris"); // ["Names", "Alice" , "Bob" , "Chris" ]
+
+
+
+    function add(a, b) {
+        [].forEach.call(arguments, function (value, index, array) {
+            console.log(value); // 2, 3
+        });
+    }
+    add(2,3);
+</script>
+
+</body>
+</html>
